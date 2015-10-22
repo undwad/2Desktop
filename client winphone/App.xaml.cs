@@ -33,11 +33,10 @@ namespace ToDesktop
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             var frame = new Frame();
-            frame.Navigate(typeof(MainPage), "JODER");
+            frame.Navigate(typeof(MainPage));
             Window.Current.Content = frame;
             Window.Current.Activate();
         }
-
 
         protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {

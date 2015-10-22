@@ -19,33 +19,35 @@ namespace ToDesktop
 {
     public sealed partial class MainPage : Page
     {
+        private IPropertySet settings = ApplicationData.Current.LocalSettings.Values;
+
         public MainPage()
         {
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("Host"))
-                host.Text = ApplicationData.Current.LocalSettings.Values["Host"].ToString();
+            if (settings.ContainsKey("Host"))
+                host.Text = settings["Host"].ToString();
 
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("Port"))
-                port.Text = ApplicationData.Current.LocalSettings.Values["Port"].ToString();
+            if (settings.ContainsKey("Port"))
+                port.Text = settings["Port"].ToString();
         }
 
         private void host_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("Host")) 
-                ApplicationData.Current.LocalSettings.Values["Host"] = host.Text;
-            else 
-                ApplicationData.Current.LocalSettings.Values.Add("Host", host.Text);
+            if (settings.ContainsKey("Host"))
+                settings["Host"] = host.Text;
+            else
+                settings.Add("Host", host.Text);
         }
 
         private void port_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("Port"))
-                ApplicationData.Current.LocalSettings.Values["Port"] = port.Text;
+            if (settings.ContainsKey("Port"))
+                settings["Port"] = port.Text;
             else
-                ApplicationData.Current.LocalSettings.Values.Add("Port", port.Text);
+                settings.Add("Port", port.Text);
         }
     }
 }

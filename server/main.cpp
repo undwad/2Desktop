@@ -5,12 +5,14 @@
 #include <QUrl>
 #include <QIcon>
 #include <QUdpSocket>
+#include <QNetworkInterface>
 #include <QDesktopServices>
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QAction>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QStringList>
 
 int main(int argc, char *argv[])
 {
@@ -33,7 +35,7 @@ int main(int argc, char *argv[])
     quint16 port = parser.value(optPort).toUShort() ? parser.value(optPort).toUShort() : 2711;
 
     QUdpSocket socket;
-    while(!socket.bind(QHostAddress::Any, port)) port++;
+    while(!socket.bind(QHostAddress::AnyIPv4, port)) port++;
 
     QObject::connect(&socket, &QUdpSocket::readyRead, [&socket]()
     {
@@ -51,6 +53,18 @@ int main(int argc, char *argv[])
         }
     });
 
+    QStringList hosts;
+    foreach (const QHostAddress &address, QNetworkInterface::allAddresses())
+        if (QAbstractSocket::IPv4Protocol == address.protocol() && QHostAddress(QHostAddress::LocalHost) != address)
+             hosts << address.toString();
+
+    QSystemTrayIcon tray(QIcon(":/icon.ico"));
+
+    tray.setToolTip(QString("%1\nHosts: %2\nPort: %3\n")
+        .arg(QApplication::applicationName())
+        .arg(hosts.join(','))
+        .arg(port));
+
     QMenu menu;
 
     QObject::connect(menu.addAction("Broadcast"), &QAction::triggered, [port](bool)
@@ -59,11 +73,12 @@ int main(int argc, char *argv[])
         QUdpSocket().writeDatagram(datagram.data(), datagram.size(), QHostAddress::Broadcast, port);
     });
 
+    menu.addSeparator();
+
     QObject::connect(menu.addAction("Exit"), &QAction::triggered, [&app](bool) { app.quit(); });
 
-    QSystemTrayIcon tray(QIcon(":/icon.ico"));
-    tray.setToolTip(QApplication::applicationName() + " on port " + QString::number(port));
     tray.setContextMenu(&menu);
+
     tray.show();
 
     return app.exec();
