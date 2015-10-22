@@ -24,8 +24,6 @@ int main(int argc, char *argv[])
         QApplication::setLibraryPaths(QStringList() << QApplication::applicationDirPath());
 #   endif
 
-    QApplication::setOrganizationName("Sparadon");
-    QApplication::setOrganizationDomain("sparadon.com");
     QApplication::setApplicationName("2Desktop Server");
 
     QCommandLineOption optPort("port", "", "port");
