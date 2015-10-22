@@ -1,0 +1,5 @@
+;!@Install@!UTF-8!
+Title="2Desktop Server Setup"
+BeginPrompt="This will install 2Desktop Server {BUILD}. Continue?"
+RunProgram="2DesktopServer.exe --install"
+;!@InstallEnd@!

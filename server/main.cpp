@@ -14,6 +14,8 @@
 #include <QCommandLineOption>
 #include <QStringList>
 
+#include "install.h"
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -27,50 +29,55 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName("2Desktop Server");
 
     QCommandLineOption optPort("port", "", "port");
+    QCommandLineOption optInstall("install");
 
     QCommandLineParser parser;
-    parser.addOptions({optPort});
+    parser.addOptions({optPort, optInstall});
     parser.parse(QApplication::arguments());
 
-    quint16 port = parser.value(optPort).toUShort() ? parser.value(optPort).toUShort() : 2711;
-
-    QUdpSocket socket;
-    while(!socket.bind(QHostAddress::AnyIPv4, port)) port++;
-
-    QObject::connect(&socket, &QUdpSocket::readyRead, [&socket]()
+    if(parser.isSet(optInstall)) return install(argc, argv);
+    else
     {
-        while (socket.hasPendingDatagrams())
+        quint16 port = parser.value(optPort).toUShort() ? parser.value(optPort).toUShort() : 2711;
+
+        QUdpSocket socket;
+        while(!socket.bind(QHostAddress::AnyIPv4, port)) port++;
+
+        QObject::connect(&socket, &QUdpSocket::readyRead, [&socket]()
         {
-            QByteArray datagram;
-            datagram.resize(socket.pendingDatagramSize());
-
-            if(socket.readDatagram(datagram.data(), datagram.size()) > 0)
+            while (socket.hasPendingDatagrams())
             {
-                QUrl url(QString::fromUtf8(datagram));
-                if(QDesktopServices::openUrl(url)) qInfo() << url;
-                else qWarning() << url;
+                QByteArray datagram;
+                datagram.resize(socket.pendingDatagramSize());
+
+                if(socket.readDatagram(datagram.data(), datagram.size()) > 0)
+                {
+                    QUrl url(QString::fromUtf8(datagram));
+                    if(QDesktopServices::openUrl(url)) qInfo() << url;
+                    else qWarning() << url;
+                }
             }
-        }
-    });
+        });
 
-    QStringList hosts;
-    foreach (const QHostAddress &address, QNetworkInterface::allAddresses())
-        if (QAbstractSocket::IPv4Protocol == address.protocol() && QHostAddress(QHostAddress::LocalHost) != address)
-             hosts << address.toString();
+        QStringList hosts;
+        foreach (const QHostAddress &address, QNetworkInterface::allAddresses())
+            if (QAbstractSocket::IPv4Protocol == address.protocol() && QHostAddress(QHostAddress::LocalHost) != address)
+                 hosts << address.toString();
 
-    QIcon icon(":/icon.ico");
-    QSystemTrayIcon tray(icon);
+        QIcon icon(":/icon.ico");
+        QSystemTrayIcon tray(icon);
 
-    tray.setToolTip(QString("%1\nHosts: %2\nPort: %3\n")
-        .arg(QApplication::applicationName())
-        .arg(hosts.join(','))
-        .arg(port));
+        tray.setToolTip(QString("%1\nHosts: %2\nPort: %3\n")
+            .arg(QApplication::applicationName())
+            .arg(hosts.join(','))
+            .arg(port));
 
-    QMenu menu;
-    QObject::connect(menu.addAction(icon, "Exit"), &QAction::triggered, [&app](bool) { app.quit(); });
-    tray.setContextMenu(&menu);
-    tray.show();
+        QMenu menu;
+        QObject::connect(menu.addAction(icon, "Exit"), &QAction::triggered, [&app](bool) { app.quit(); });
+        tray.setContextMenu(&menu);
+        tray.show();
 
-    return app.exec();
+        return app.exec();
+    }
 }
 
