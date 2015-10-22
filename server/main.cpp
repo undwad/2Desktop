@@ -9,6 +9,8 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QAction>
+#include <QCommandLineParser>
+#include <QCommandLineOption>
 
 int main(int argc, char *argv[])
 {
@@ -22,21 +24,16 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain("sparadon.com");
     QApplication::setApplicationName("2Desktop Server");
 
-    QMenu menu;
-    QObject::connect
-    (
-        menu.addAction(QIcon::fromTheme("application-exit"), "Exit 2Desktop"),
-        &QAction::triggered,
-        [&app](bool) { app.quit(); }
-    );
+    QCommandLineOption optPort("port", "", "port");
 
-    QSystemTrayIcon tray(QIcon(":/icon.ico"));
-    tray.setToolTip(QApplication::applicationName());
-    tray.setContextMenu(&menu);
-    tray.show();
+    QCommandLineParser parser;
+    parser.addOptions({optPort});
+    parser.parse(QApplication::arguments());
+
+    quint16 port = parser.value(optPort).toUShort() ? parser.value(optPort).toUShort() : 2711;
 
     QUdpSocket socket;
-    socket.bind(QHostAddress::Any, 2711);
+    while(!socket.bind(QHostAddress::Any, port)) port++;
 
     QObject::connect(&socket, &QUdpSocket::readyRead, [&socket]()
     {
@@ -48,11 +45,26 @@ int main(int argc, char *argv[])
             if(socket.readDatagram(datagram.data(), datagram.size()) > 0)
             {
                 QUrl url(QString::fromUtf8(datagram));
-                qDebug() << url;
-                QDesktopServices::openUrl(url);
+                if(QDesktopServices::openUrl(url)) qInfo() << url;
+                else qWarning() << url;
             }
         }
     });
+
+    QMenu menu;
+
+    QObject::connect(menu.addAction("Broadcast"), &QAction::triggered, [port](bool)
+    {
+        QByteArray datagram = QString("2Desktop").toUtf8();
+        QUdpSocket().writeDatagram(datagram.data(), datagram.size(), QHostAddress::Broadcast, port);
+    });
+
+    QObject::connect(menu.addAction("Exit"), &QAction::triggered, [&app](bool) { app.quit(); });
+
+    QSystemTrayIcon tray(QIcon(":/icon.ico"));
+    tray.setToolTip(QApplication::applicationName() + " on port " + QString::number(port));
+    tray.setContextMenu(&menu);
+    tray.show();
 
     return app.exec();
 }
