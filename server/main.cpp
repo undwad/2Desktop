@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     parser.addOptions({optPort, optInstall});
     parser.parse(QApplication::arguments());
 
-    if(parser.isSet(optInstall)) return install(argc, argv);
+    if(parser.isSet(optInstall)) return install("--port 2711");
     else
     {
         quint16 port = parser.value(optPort).toUShort() ? parser.value(optPort).toUShort() : 2711;

@@ -11,4 +11,4 @@ bool executeCommand(const QString& exe, const QString& args, const QString& dir)
 bool executeCommandUnderAdmin(const QString& exe, const QString& args, const QString& dir);
 void registerAutoRun(const QString& exe);
 
-int install(int argc, char *argv[]);
+int install(const QString& exeArgs);

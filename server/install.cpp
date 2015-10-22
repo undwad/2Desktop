@@ -30,7 +30,7 @@ void copyRecursively(const QString& sourceFilePath, const QString& targetFilePat
         qWarning() << "copy" << sourceFilePath << "to" << targetFilePath << "failed";
 }
 
-int install(int argc, char *argv[])
+int install(const QString& exeArgs)
 {
     const QString programDir = perMachineProgramDir();
     if(QDir(programDir) != QDir(QApplication::applicationDirPath()))
@@ -55,13 +55,13 @@ int install(int argc, char *argv[])
 
             createExeLink
             (
-                exePath, "", programDir, QApplication::applicationName(),
+                exePath, exeArgs, programDir, QApplication::applicationName(),
                 QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + '/' + QFileInfo(QApplication::applicationFilePath()).baseName() + ".lnk"
             );
 
-            registerAutoRun(exePath);
+            registerAutoRun(exePath + ' ' + exeArgs);
 
-            executeCommand(exePath, "", programDir);
+            executeCommand(exePath, exeArgs, programDir);
         }
         else
         {
