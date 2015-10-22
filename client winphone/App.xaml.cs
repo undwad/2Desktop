@@ -27,9 +27,10 @@ namespace ToDesktop
 {
     public sealed partial class App : Application
     {
+        private IPropertySet settings = ApplicationData.Current.LocalSettings.Values;
+
         public App() { this.InitializeComponent(); }
-
-
+        
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             var frame = new Frame();
@@ -40,8 +41,8 @@ namespace ToDesktop
 
         protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("Host"))
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("Port"))
+            if (settings.ContainsKey("Host"))
+                if (settings.ContainsKey("Port"))
                     if (args.ShareOperation.Data.Contains(StandardDataFormats.WebLink))
                     {
                         Uri uri = await args.ShareOperation.Data.GetWebLinkAsync();
@@ -52,8 +53,8 @@ namespace ToDesktop
                             (
                                 var stream = await socket.GetOutputStreamAsync
                                 (
-                                    new HostName(ApplicationData.Current.LocalSettings.Values["Host"].ToString()),
-                                    ApplicationData.Current.LocalSettings.Values["Port"].ToString()
+                                    new HostName(settings["Host"].ToString()),
+                                    settings["Port"].ToString()
                                 )
                             )
                             {

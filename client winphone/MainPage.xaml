@@ -9,9 +9,11 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBox x:Name="host" HorizontalAlignment="Left" Margin="49,156,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="304" TextChanged="host_TextChanged"/>
-        <TextBox x:Name="port" HorizontalAlignment="Left" Margin="49,261,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="304" TextChanged="port_TextChanged"/>
-        <TextBlock HorizontalAlignment="Left" Margin="49,124,0,0" TextWrapping="Wrap" Text="Host" VerticalAlignment="Top" Height="27" Width="304" FontSize="20"/>
-        <TextBlock HorizontalAlignment="Left" Margin="49,231,0,0" TextWrapping="Wrap" Text="Port" VerticalAlignment="Top" Height="25" Width="304" FontSize="20"/>
+        <TextBox x:Name="host" HorizontalAlignment="Left" Margin="49,447,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="304" TextChanged="host_TextChanged"/>
+        <TextBox x:Name="port" HorizontalAlignment="Left" Margin="49,552,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="304" TextChanged="port_TextChanged"/>
+        <TextBlock HorizontalAlignment="Left" Margin="49,415,0,0" TextWrapping="Wrap" Text="Host" VerticalAlignment="Top" Height="27" Width="304" FontSize="20"/>
+        <TextBlock HorizontalAlignment="Left" Margin="49,522,0,0" TextWrapping="Wrap" Text="Port" VerticalAlignment="Top" Height="25" Width="304" FontSize="20"/>
+        <TextBlock HorizontalAlignment="Left" Margin="49,24,0,0" TextWrapping="Wrap" Text="2Desktop" VerticalAlignment="Top" Height="27" Width="304" FontSize="20"/>
+        <Image HorizontalAlignment="Left" Height="306" Margin="49,77,0,0" VerticalAlignment="Top" Width="304" Source="Assets/Logo.png"/>
     </Grid>
 </Page>

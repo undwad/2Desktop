@@ -58,7 +58,8 @@ int main(int argc, char *argv[])
         if (QAbstractSocket::IPv4Protocol == address.protocol() && QHostAddress(QHostAddress::LocalHost) != address)
              hosts << address.toString();
 
-    QSystemTrayIcon tray(QIcon(":/icon.ico"));
+    QIcon icon(":/icon.ico");
+    QSystemTrayIcon tray(icon);
 
     tray.setToolTip(QString("%1\nHosts: %2\nPort: %3\n")
         .arg(QApplication::applicationName())
@@ -66,19 +67,8 @@ int main(int argc, char *argv[])
         .arg(port));
 
     QMenu menu;
-
-    QObject::connect(menu.addAction("Broadcast"), &QAction::triggered, [port](bool)
-    {
-        QByteArray datagram = QString("2Desktop").toUtf8();
-        QUdpSocket().writeDatagram(datagram.data(), datagram.size(), QHostAddress::Broadcast, port);
-    });
-
-    menu.addSeparator();
-
-    QObject::connect(menu.addAction("Exit"), &QAction::triggered, [&app](bool) { app.quit(); });
-
+    QObject::connect(menu.addAction(icon, "Exit"), &QAction::triggered, [&app](bool) { app.quit(); });
     tray.setContextMenu(&menu);
-
     tray.show();
 
     return app.exec();
