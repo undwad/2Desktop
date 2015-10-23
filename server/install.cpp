@@ -24,13 +24,13 @@ void copyRecursively(const QString& sourceFilePath, const QString& targetFilePat
             }
         QStringList fileNames = QDir(sourceFilePath).entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
         foreach (const QString &fileName, fileNames)
-            copyRecursively(sourceFilePath + '/' + fileName, targetFilePath + '/' + fileName);
+            copyRecursively(sourceFilePath + QDir::separator() + fileName, targetFilePath + QDir::separator() + fileName);
     }
     else if(!QFile::copy(sourceFilePath, targetFilePath))
         qWarning() << "copy" << sourceFilePath << "to" << targetFilePath << "failed";
 }
 
-int install(const QString& exeArgs)
+int install(const QString& args)
 {
     const QString programDir = perMachineProgramDir();
     if(QDir(programDir) != QDir(QApplication::applicationDirPath()))
@@ -40,7 +40,7 @@ int install(const QString& exeArgs)
             qDebug() << "INSTALLING";
 
             const QString exeName = QFileInfo(QApplication::applicationFilePath()).fileName();
-            const QString exePath = programDir + '/' + exeName;
+            const QString exePath = programDir + QDir::separator() + exeName;
 
             if(QFile(exePath).exists())
             {
@@ -55,13 +55,13 @@ int install(const QString& exeArgs)
 
             createExeLink
             (
-                exePath, exeArgs, programDir, QApplication::applicationName(),
-                QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + '/' + QFileInfo(QApplication::applicationFilePath()).baseName() + ".lnk"
+                exePath, args, programDir, QApplication::applicationName(),
+                QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QFileInfo(QApplication::applicationFilePath()).baseName() + ".lnk"
             );
 
-            registerAutoRun(exePath + ' ' + exeArgs);
+            registerAutoRun(exePath, args);
 
-            executeCommand(exePath, exeArgs, programDir);
+            executeCommand(exePath, args, programDir);
         }
         else
         {

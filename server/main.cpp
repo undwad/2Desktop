@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         QSystemTrayIcon tray(icon);
 
         tray.setToolTip(QString("%1\nHosts: %2\nPort: %3\n")
-            .arg(QApplication::applicationName())
+            .arg(QApplication::applicationName()+ ' ' + __DATE__ + ' ' + __TIME__)
             .arg(hosts.join(','))
             .arg(port));
 

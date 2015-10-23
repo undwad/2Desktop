@@ -195,9 +195,9 @@ bool executeCommandUnderAdmin(const QString& exe, const QString& args, const QSt
     return (int)ShellExecute(0, L"runas", exe.toStdWString().c_str(), args.toStdWString().c_str(), dir.toStdWString().c_str(), SW_SHOWNORMAL) > 32;
 }
 
-void registerAutoRun(const QString& exe)
+void registerAutoRun(const QString& exe, const QString& args)
 {
     QSettings registry("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::Format::NativeFormat);
-    registry.setValue(QApplication::applicationName(), QVariant(exe));
+    registry.setValue(QApplication::applicationName(), QVariant(QString("\"%1\" %2").arg(exe).arg(args)));
     registry.sync();
 }
