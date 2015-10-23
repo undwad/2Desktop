@@ -53,13 +53,11 @@ int install(const QString& args)
 
             copyRecursively(QApplication::applicationDirPath(), programDir);
 
-            createExeLink
-            (
-                exePath, args, programDir, QApplication::applicationName(),
-                QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QFileInfo(QApplication::applicationFilePath()).baseName() + ".lnk"
-            );
+            QString link = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QFileInfo(QApplication::applicationFilePath()).baseName() + ".lnk";
+            link.replace('/', QDir::separator());
+            createExeLink(exePath, args, programDir, QApplication::applicationName(), link);
 
-            registerAutoRun(exePath, args);
+            registerAutoRun(link, "");
 
             executeCommand(exePath, args, programDir);
         }
