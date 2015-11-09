@@ -1,42 +1,39 @@
-<!DOCTYPE>
-<!--
- * Copyright (c) 2012 The Chromium Authors. All rights reserved.  Use of this
- * source code is governed by a BSD-style license that can be found in the
- * LICENSE file.
--->
 <html>
 <head>
-  <title>Options for the Send as Email extension</title>
+  <title>2Desktop</title>
 <style>
-#providerSelection {
+#settings {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 10pt;
 }
 </style>
+<script type="text/javascript" src="jquery-1.4.3.min.js"></script>
 <script src="options.js"></script>
 </head>
 <body>
 <table class="simple">
 <tr>
   <td rowspan="2" valign="top" align="center" width="80">
-    <img src="mail_128x128.png" width="64" height="64" />
+    <img src="icon_128x128.png" width="64" height="64" />
   </td>
   <td height="22"></td>
 </tr>
 <tr>
   <td valign="center">
-    <div id="providerSelection">
-    <strong>Select provider to use when emailing a web page address:</strong>
-    <br /><br />
-    <label>
-      <input id="default" type="radio" name="mailto" value="mailto" checked>
-      Your default mail handler<br>
-    </label>
-
-    <label>
-      <input id="gmail" type="radio" name="mailto" value="gmail">Gmail<br>
-    </label>
-    </div>
+      <div id="settings">
+          <strong>2Desktop</strong>
+          <br/><br/>
+          <label>
+              Host<br/> 
+              <input id="host" type="text"><br/>
+              <br/>
+          </label>
+          <label>
+              Port<br/> 
+              <input id="port" type="text"> <br/>
+              <br/>
+          </label>
+      </div>
   </td>
 </tr>
 </table>
