@@ -1,0 +1,19 @@
+{
+    "name": "2Desktop (by Undwad)",
+    "description": "Share web link from mobile device with desktop browser",
+    "version": "1.2.6",
+    "background": 
+    {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "icons": { "128": "icon_128x128.png" },
+    "options_page": "options.html",
+    "permissions": [ "tabs", "http://*/*", "https://*/*" ],
+    "browser_action": 
+    {
+        "default_title": "2Desktop",
+        "default_icon": "icon_16x16.png"
+    },
+    "manifest_version": 2
+}

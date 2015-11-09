@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = 2DesktopServer
 
-QT += core gui widgets network
+QT += core gui widgets websockets
 
 win32:RC_ICONS += ./icon.ico
 

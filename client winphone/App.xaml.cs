@@ -21,6 +21,7 @@ using Windows.Networking.Sockets;
 using Windows.Networking;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.Web;
 using System.Text;
 
 namespace ToDesktop
@@ -30,8 +31,8 @@ namespace ToDesktop
         private IPropertySet settings = ApplicationData.Current.LocalSettings.Values;
 
         public App() { this.InitializeComponent(); }
-        
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+
+        void show()
         {
             var frame = new Frame();
             frame.Navigate(typeof(MainPage));
@@ -39,30 +40,33 @@ namespace ToDesktop
             Window.Current.Activate();
         }
 
+        protected override void OnLaunched(LaunchActivatedEventArgs args) { show(); }
+
         protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
-            if (settings.ContainsKey("Host"))
-                if (settings.ContainsKey("Port"))
-                    if (args.ShareOperation.Data.Contains(StandardDataFormats.WebLink))
+            if (args.ShareOperation.Data.Contains(StandardDataFormats.WebLink))
+            {
+                Uri uri = await args.ShareOperation.Data.GetWebLinkAsync();
+                if (null != uri)
+                try
+                {
+                    using (var socket = new MessageWebSocket())
                     {
-                        Uri uri = await args.ShareOperation.Data.GetWebLinkAsync();
-                        if (null != uri)
+                        socket.Control.MessageType = SocketMessageType.Utf8;
+                        await socket.ConnectAsync(new Uri("ws://" + settings["Host"].ToString() + ":" + settings["Port"].ToString()));
+                        using (var writer = new DataWriter(socket.OutputStream))
                         {
-                            using (var socket = new DatagramSocket())
-                            using
-                            (
-                                var stream = await socket.GetOutputStreamAsync
-                                (
-                                    new HostName(settings["Host"].ToString()),
-                                    settings["Port"].ToString()
-                                )
-                            )
-                            {
-                                await stream.WriteAsync(Encoding.UTF8.GetBytes(uri.AbsoluteUri).AsBuffer());
-                                args.ShareOperation.ReportCompleted();
-                            }
+                            writer.WriteString(uri.AbsoluteUri);
+                            await writer.StoreAsync();
+                            args.ShareOperation.ReportCompleted();
                         }
                     }
+                }
+                catch
+                {
+                    show();
+                }
+            }
         }
     }
 }

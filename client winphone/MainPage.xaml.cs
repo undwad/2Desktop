@@ -32,6 +32,8 @@ namespace ToDesktop
 
             if (settings.ContainsKey("Port"))
                 port.Text = settings["Port"].ToString();
+            else
+                settings["Port"] = port.Text = "2711";
         }
 
         private void host_TextChanged(object sender, TextChangedEventArgs e)

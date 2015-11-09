@@ -4,7 +4,8 @@
 #include <QString>
 #include <QUrl>
 #include <QIcon>
-#include <QUdpSocket>
+#include <QWebSocket>
+#include <QWebSocketServer>
 #include <QNetworkInterface>
 #include <QDesktopServices>
 #include <QSystemTrayIcon>
@@ -38,23 +39,18 @@ int main(int argc, char *argv[])
     {
         quint16 port = parser.value(optPort).toUShort() ? parser.value(optPort).toUShort() : 2711;
 
-        QUdpSocket socket;
-        while(!socket.bind(QHostAddress::AnyIPv4, port)) port++;
+        QWebSocketServer server("2desktop", QWebSocketServer::NonSecureMode);
 
-        QObject::connect(&socket, &QUdpSocket::readyRead, [&socket]()
+        while(!server.listen(QHostAddress::AnyIPv4, port)) port++;
+
+        QObject::connect(&server, &QWebSocketServer::newConnection, [&server]()
         {
-            while (socket.hasPendingDatagrams())
+            QObject::connect(server.nextPendingConnection(), &QWebSocket::textMessageReceived, [](QString message)
             {
-                QByteArray datagram;
-                datagram.resize(socket.pendingDatagramSize());
-
-                if(socket.readDatagram(datagram.data(), datagram.size()) > 0)
-                {
-                    QUrl url(QString::fromUtf8(datagram));
-                    if(QDesktopServices::openUrl(url)) qInfo() << url;
-                    else qWarning() << url;
-                }
-            }
+                QUrl url(message);
+                if(QDesktopServices::openUrl(url)) qInfo() << url;
+                else qWarning() << url;
+            });
         });
 
         QStringList hosts;

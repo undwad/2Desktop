@@ -3,7 +3,7 @@
   <Identity Name="1c0509c0-4297-465a-adfe-354f8f5991b4" Publisher="CN=Undwad" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="1c0509c0-4297-465a-adfe-354f8f5991b4" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>ShareLink</DisplayName>
+    <DisplayName>2Desktop</DisplayName>
     <PublisherDisplayName>Undwad</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
